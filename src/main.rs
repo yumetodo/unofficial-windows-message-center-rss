@@ -13,7 +13,6 @@ fn main() {
         .unwrap()
         .text()
         .unwrap();
-    let articles = Parser::new("https://docs.microsoft.com")
-        .parse(&doc);
+    let articles = Parser::new("https://docs.microsoft.com").parse(&doc);
     println!("{:#?}", articles);
 }

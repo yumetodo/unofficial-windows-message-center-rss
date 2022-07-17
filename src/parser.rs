@@ -1,8 +1,8 @@
 use super::article::Article;
 
+use scraper::ElementRef;
 use scraper::Html;
 use scraper::Selector;
-use scraper::ElementRef;
 
 #[derive(Debug)]
 pub struct Parser {
@@ -29,20 +29,35 @@ impl Parser {
         match v.attr("data-linktype")? {
             "external" => Some(v.attr("href")?.to_string()),
             "absolute-path" => Some(self.base_url.clone() + v.attr("href")?),
-            _ => None
+            _ => None,
         }
     }
     fn parse_line<'a>(&self, tr: ElementRef<'a>) -> Option<Article> {
         let title_element = tr.select(&self.selector_article_head).next()?;
         let url = self.parse_url(title_element)?;
-        let title: String = title_element.select(&self.selector_b).next()?.text().collect();
-        let id = tr.select(&self.selector_article_id).next()?.value().attr("id")?.to_string();
-        let body = tr.select(&self.selector_article_body).map(|d: ElementRef| d.html()).reduce(|ret, next| ret + &next)?;
+        let title: String = title_element
+            .select(&self.selector_b)
+            .next()?
+            .text()
+            .collect();
+        let id = tr
+            .select(&self.selector_article_id)
+            .next()?
+            .value()
+            .attr("id")?
+            .to_string();
+        let body = tr
+            .select(&self.selector_article_body)
+            .map(|d: ElementRef| d.html())
+            .reduce(|ret, next| ret + &next)?;
         Some(Article::new(id, url, title, body))
     }
     pub fn parse(&self, doc: &str) -> Vec<Article> {
         let document = Html::parse_document(&doc);
-        let ret = document.select(&self.selector_table_line).filter_map(|tr| self.parse_line(tr)).collect();
+        let ret = document
+            .select(&self.selector_table_line)
+            .filter_map(|tr| self.parse_line(tr))
+            .collect();
         ret
     }
 }
