@@ -1,5 +1,6 @@
 mod article;
 mod parser;
+mod feed;
 use parser::Parser;
 
 fn main() {
