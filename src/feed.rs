@@ -3,7 +3,7 @@ use std::fmt::Display;
 fn to_xml_str<T: Display>(value: &T, var_name: &str) -> String {
     format!("<{}>{}</{}>", var_name, value, var_name)
 }
-trait IntoXMLString<T, U> {
+trait IntoXMLString<T = (), U = ()> {
     fn to_xml_str(&self, var_name: &str) -> String;
 }
 impl<T: Display> IntoXMLString<T, T> for T {
@@ -58,7 +58,7 @@ impl Person {
         }
     }
 }
-impl IntoXMLString<Person, Person> for Person {
+impl IntoXMLString for Person {
     fn to_xml_str(&self, var_name: &str) -> String {
         let value = format!(
             "{}{}{}",
