@@ -32,15 +32,15 @@ macro_rules! xml_attribute_accessor_impl {
         pub fn as_xml_attributes(&self) -> String {
             let mut capacity: usize = 0;
             $(
-                capacity += self.$name.map_or(0, |s| s.len());
+                capacity += self.$name.as_deref().map_or(0, |s| s.len());
             )*
             let mut ret = String::with_capacity(capacity * 2);
             $(
-                if let Some(v) = self.$name {
+                if let Some(v) = self.$name.as_deref() {
                     if !ret.is_empty() {
                         ret += " ";
                     }
-                    ret += format!(r#"{}="{}""#, stringify!($name).trim_end_matches('_'), v)
+                    ret += &format!(r#"{}="{}""#, stringify!($name).trim_end_matches('_'), v);
                 }
             )*
             ret
