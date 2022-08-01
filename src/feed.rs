@@ -27,6 +27,26 @@ macro_rules! xml_accessor_impl {
         }
     };
 }
+macro_rules! xml_attribute_accessor_impl {
+    ($( $name:ident ),*) => {
+        pub fn as_xml_attributes(&self) -> String {
+            let mut capacity: usize = 0;
+            $(
+                capacity += self.$name.map_or(0, |s| s.len());
+            )*
+            let mut ret = String::with_capacity(capacity * 2);
+            $(
+                if let Some(v) = self.$name {
+                    if !ret.is_empty() {
+                        ret += " ";
+                    }
+                    ret += format!(r#"{}="{}""#, stringify!($name).trim_end_matches('_'), v)
+                }
+            )*
+            ret
+        }
+    };
+}
 pub struct Person {
     name: String,
     uri: Option<String>,
@@ -65,6 +85,22 @@ impl IntoXMLString for Person {
             self.get_email_as_xml()
         );
         to_xml_str(&value, var_name)
+    }
+}
+#[derive(Default)]
+pub struct Link {
+    href: Option<String>,
+    rel: Option<String>,
+    type_: Option<String>,
+    hreflang: Option<String>,
+    title: Option<String>,
+}
+impl Link {
+    xml_attribute_accessor_impl!(href, rel, type_, hreflang, title);
+}
+impl IntoXMLString for Link {
+    fn to_xml_str(&self, var_name: &str) -> String {
+        format!("<{} {} />", var_name, self.as_xml_attributes())
     }
 }
 pub struct Feed {
