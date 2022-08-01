@@ -45,16 +45,14 @@ impl Person {
     }
     pub fn uri<S: Into<String>>(self, uri: S) -> Self {
         Person {
-            name: self.name,
             uri: Some(uri.into()),
-            email: self.email,
+            ..self
         }
     }
     pub fn email<S: Into<String>>(self, email: S) -> Self {
         Person {
-            name: self.name,
-            uri: self.uri,
             email: Some(email.into()),
+            ..self
         }
     }
 }
