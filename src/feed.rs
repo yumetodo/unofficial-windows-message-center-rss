@@ -103,6 +103,26 @@ impl IntoXMLString for Link {
         format!("<{} {} />", var_name, self.as_xml_attributes())
     }
 }
+pub struct HTMLText {
+    text: String,
+}
+impl HTMLText {
+    pub fn new(s: &str) -> Self {
+        HTMLText {
+            text: String::from(html_escape::encode_text(s)),
+        }
+    }
+}
+impl From<&str> for HTMLText {
+    fn from(s: &str) -> Self {
+        Self::new(s)
+    }
+}
+impl IntoXMLString for HTMLText {
+    fn to_xml_str(&self, var_name: &str) -> String {
+        format!(r#"<{} type="html">{}</{}>"#, var_name, self.text, var_name)
+    }
+}
 pub struct Feed {
     id: String,
     title: String,
