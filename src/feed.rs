@@ -1,4 +1,5 @@
-use std::fmt::Display;
+use fmt::Display;
+use std::fmt;
 
 fn to_xml_str<T: Display>(value: &T, var_name: &str) -> String {
     format!("<{}>{}</{}>", var_name, value, var_name)
@@ -47,6 +48,18 @@ macro_rules! xml_attribute_accessor_impl {
         }
     };
 }
+macro_rules! optional_member_setter_impl {
+    ($struct_name:ident, $( $name:ident : $into_type:ident),*) => {
+        $(
+            pub fn $name<S: Into<$into_type>>(self, $name: S) -> Self {
+                $struct_name {
+                    $name: Some($name.into()),
+                    ..self
+                }
+            }
+        )*
+    }
+}
 pub struct Person {
     name: String,
     uri: Option<String>,
@@ -63,18 +76,7 @@ impl Person {
             email: None,
         }
     }
-    pub fn uri<S: Into<String>>(self, uri: S) -> Self {
-        Person {
-            uri: Some(uri.into()),
-            ..self
-        }
-    }
-    pub fn email<S: Into<String>>(self, email: S) -> Self {
-        Person {
-            email: Some(email.into()),
-            ..self
-        }
-    }
+    optional_member_setter_impl!(Person, uri: String, email: String);
 }
 impl IntoXMLString for Person {
     fn to_xml_str(&self, var_name: &str) -> String {
