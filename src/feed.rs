@@ -67,8 +67,8 @@ pub struct Person {
 }
 impl Person {
     xml_accessor_impl!(name, get_name_as_xml);
-    xml_accessor_impl!(name, get_uri_as_xml);
-    xml_accessor_impl!(name, get_email_as_xml);
+    xml_accessor_impl!(uri, get_uri_as_xml);
+    xml_accessor_impl!(email, get_email_as_xml);
     pub fn new<S: Into<String>>(name: S) -> Self {
         Person {
             name: name.into(),
