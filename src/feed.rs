@@ -82,6 +82,18 @@ macro_rules! optional_member_setter_impl {
         )*
     }
 }
+macro_rules! vec_member_setter_impl {
+    ($struct_name:ident, $( $name:ident: $elem_type:ident ),*) => {
+        $(
+            pub fn $name(self, $name: Vec<$elem_type>) -> Self {
+                $struct_name {
+                    $name: $name,
+                    ..self
+                }
+            }
+        )*
+    }
+}
 pub struct Person {
     name: String,
     uri: Option<String>,
@@ -162,6 +174,7 @@ impl Entry {
         }
     }
     optional_member_setter_impl!(Entry, content: HTMLText, link: Link, summary: HTMLText);
+    vec_member_setter_impl!(Entry, author: Person);
     concatenated_xml_accessor!(id, title, updated, author, content, link, summary);
 }
 impl IntoXMLString for Entry {
