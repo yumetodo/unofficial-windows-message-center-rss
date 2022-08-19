@@ -139,6 +139,36 @@ impl IntoXMLString for HTMLText {
         format!(r#"<{} type="html">{}</{}>"#, var_name, self.text, var_name)
     }
 }
+
+pub struct Entry {
+    id: String,
+    title: String,
+    updated: String,
+    author: Vec<Person>,
+    content: Option<HTMLText>,
+    link: Option<Link>,
+    summary: Option<HTMLText>,
+}
+impl Entry {
+    pub fn new(id: String, title: String, updated: String) -> Self {
+        Entry {
+            id,
+            title,
+            updated,
+            author: Default::default(),
+            content: None,
+            link: None,
+            summary: None,
+        }
+    }
+    optional_member_setter_impl!(Entry, content: HTMLText, link: Link, summary: HTMLText);
+    concatenated_xml_accessor!(id, title, updated, author, content, link, summary);
+}
+impl IntoXMLString for Entry {
+    fn to_xml_str(&self, var_name: &str) -> String {
+        to_xml_str(&self.as_concatenated_xml(), var_name)
+    }
+}
 pub struct Feed {
     id: String,
     title: String,
