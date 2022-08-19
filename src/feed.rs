@@ -186,9 +186,27 @@ pub struct Feed {
     id: String,
     title: String,
     updated: String,
+    author: Vec<Person>,
+    link: Option<Link>,
+    entry: Vec<Entry>,
 }
 impl Feed {
     pub fn new(id: String, title: String, updated: String) -> Self {
-        Feed { id, title, updated }
+        Feed {
+            id,
+            title,
+            updated,
+            author: Default::default(),
+            link: None,
+            entry: Default::default(),
+        }
+    }
+    optional_member_setter_impl!(Feed, link: Link);
+    vec_member_setter_impl!(Feed, author: Person, entry: Entry);
+    concatenated_xml_accessor!(id, title, updated, author, link, entry);
+}
+impl IntoXMLString for Feed {
+    fn to_xml_str(&self, var_name: &str) -> String {
+        to_xml_str(&self.as_concatenated_xml(), var_name)
     }
 }
