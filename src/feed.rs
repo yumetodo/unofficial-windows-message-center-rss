@@ -21,12 +21,34 @@ impl<T: Display> IntoXMLString<Option<T>, T> for Option<T> {
         }
     }
 }
-macro_rules! xml_accessor_impl {
-    ($name:ident, $access_name:ident) => {
-        pub fn $access_name(&self) -> String {
-            self.$name.to_xml_str(stringify!($name))
+impl<T: IntoXMLString> IntoXMLString for Option<T> {
+    fn to_xml_str(&self, var_name: &str) -> String {
+        if let Some(v) = self {
+            v.to_xml_str(var_name)
+        } else {
+            String::new()
         }
-    };
+    }
+}
+impl<T: IntoXMLString> IntoXMLString for Vec<T> {
+    fn to_xml_str(&self, var_name: &str) -> String {
+        let mut ret = String::new();
+        for e in self {
+            ret += &e.to_xml_str(var_name);
+        }
+        ret
+    }
+}
+macro_rules! concatenated_xml_accessor {
+    ($($name:ident),*) => {
+        pub fn as_concatenated_xml(&self) -> String {
+            let mut ret = String::new();
+            $(
+                ret += &self.$name.to_xml_str(stringify!($name));
+            )*
+            ret
+        }
+    }
 }
 macro_rules! xml_attribute_accessor_impl {
     ($( $name:ident ),*) => {
@@ -66,9 +88,6 @@ pub struct Person {
     email: Option<String>,
 }
 impl Person {
-    xml_accessor_impl!(name, get_name_as_xml);
-    xml_accessor_impl!(uri, get_uri_as_xml);
-    xml_accessor_impl!(email, get_email_as_xml);
     pub fn new<S: Into<String>>(name: S) -> Self {
         Person {
             name: name.into(),
@@ -77,16 +96,11 @@ impl Person {
         }
     }
     optional_member_setter_impl!(Person, uri: String, email: String);
+    concatenated_xml_accessor!(name, uri, email);
 }
 impl IntoXMLString for Person {
     fn to_xml_str(&self, var_name: &str) -> String {
-        let value = format!(
-            "{}{}{}",
-            self.get_name_as_xml(),
-            self.get_uri_as_xml(),
-            self.get_email_as_xml()
-        );
-        to_xml_str(&value, var_name)
+        to_xml_str(&self.as_concatenated_xml(), var_name)
     }
 }
 #[derive(Default)]
