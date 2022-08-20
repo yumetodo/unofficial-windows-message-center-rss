@@ -24,7 +24,10 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - run: cd repo && cargo run > ../pages/feed/atom10.xml
+      - run: |
+          mkdir -p pages/feed
+          cd repo
+          cargo run > ../pages/feed/atom10.xml
       - run: |
           cd pages
           git add ./ --all
