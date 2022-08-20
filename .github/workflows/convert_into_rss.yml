@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  schedule:
+    # UTC 表記
+    # 日本時間 09:19
+    - cron: "19 0 * * *"
 jobs:
   scrap:
     runs-on: ubuntu-22.04
