@@ -1,10 +1,10 @@
 #[derive(Debug)]
 pub struct Article {
-    id: String,
-    url: String,
-    title: String,
-    date: String,
-    body: String,
+    pub id: String,
+    pub url: String,
+    pub title: String,
+    pub date: String,
+    pub body: String,
 }
 impl Article {
     pub fn new(id: String, url: String, title: String, date: String, body: String) -> Self {
