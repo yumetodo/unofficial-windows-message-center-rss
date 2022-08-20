@@ -37,6 +37,10 @@ fn main() {
         Link::new()
             .href("https://docs.microsoft.com/en-us/windows/release-health/windows-message-center")
             .type_("text/html"),
+        Link::new()
+            .href("https://yumetodo.github.io/unofficial-windows-message-center-rss/feed/atom10.xml")
+            .type_("application/atom+xml")
+            .rel("self"),
     ])
     .entry(entries);
     std::io::stdout()
