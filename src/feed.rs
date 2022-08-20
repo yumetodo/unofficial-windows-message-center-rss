@@ -224,6 +224,13 @@ impl Feed {
     optional_member_setter_impl!(Feed, link: Link);
     vec_member_setter_impl!(Feed, author: Person, entry: Entry);
     concatenated_xml_accessor!(id, title, updated, author, link, entry);
+    pub fn to_xml(&self) -> String {
+        format!(
+            "{}\n{}",
+            r#"<?xml version="1.0" encoding="utf-8"?>"#,
+            self.to_xml_str("feed")
+        )
+    }
 }
 impl IntoXMLString for Feed {
     fn to_xml_str(&self, var_name: &str) -> String {
