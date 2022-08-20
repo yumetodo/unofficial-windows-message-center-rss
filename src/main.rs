@@ -1,7 +1,11 @@
 mod article;
-mod parser;
 mod feed;
+mod parser;
+use article::Article;
+use chrono::Utc;
+use feed::*;
 use parser::Parser;
+use std::io::Write;
 
 fn main() {
     let client = reqwest::blocking::Client::builder()
@@ -15,5 +19,26 @@ fn main() {
         .text()
         .unwrap();
     let articles = Parser::new("https://docs.microsoft.com").parse(&doc);
-    println!("{:#?}", articles);
+    let entries = articles
+        .into_iter()
+        .map(|a: Article| {
+            Entry::new(a.id, a.title, a.date)
+                .link(Link::new().href(a.url).rel("alternate"))
+                .content(a.body)
+        })
+        .collect::<Vec<Entry>>();
+    let feed = Feed::new(
+        "https://github.com/yumetodo/unofficial-windows-message-center-rss".into(),
+        "Windows message center - Recent announcements".into(),
+        Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string(),
+    )
+    .author(vec![Person::new("direek"), Person::new("Microsoft")])
+    .link(
+        Link::new()
+            .href("https://docs.microsoft.com/en-us/windows/release-health/windows-message-center"),
+    )
+    .entry(entries);
+    std::io::stdout()
+        .write_all(feed.to_xml().as_bytes())
+        .unwrap();
 }
