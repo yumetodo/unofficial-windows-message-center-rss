@@ -15,7 +15,6 @@ jobs:
         with:
           ref: gh-pages
           path: pages
-      - run: cd repo
       - uses: actions/cache@v3
         with:
           path: |
@@ -25,13 +24,9 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - run: cargo run > ../pages/feed/atom10.xml
-      - uses: actions/upload-artifact@v3
-        with:
-          name: atom
-          path: feed/atom10.xml
-      - run: cd ../pages
+      - run: cd repo && cargo run > ../pages/feed/atom10.xml
       - run: |
+          cd pages
           git add ./ --all
           git config user.email "yume-wikijp@live.jp"
           git config user.name "yumetodo"
