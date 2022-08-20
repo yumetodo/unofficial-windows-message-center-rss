@@ -126,6 +126,19 @@ pub struct Link {
     title: Option<String>,
 }
 impl Link {
+    pub fn new() -> Self {
+        Link {
+            ..Default::default()
+        }
+    }
+    optional_member_setter_impl!(
+        Link,
+        href: String,
+        rel: String,
+        type_: String,
+        hreflang: String,
+        title: String
+    );
     xml_attribute_accessor_impl!(href, rel, type_, hreflang, title);
 }
 impl IntoXMLString for Link {
