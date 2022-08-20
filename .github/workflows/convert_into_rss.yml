@@ -28,11 +28,10 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - run: |
-          mkdir -p pages/feed
-          cd repo
-          cargo run > ../pages/feed/atom10.xml
-      - run: |
+      - run: mkdir -p pages/feed
+      - run: cd repo && cargo run > ../pages/feed/atom10.xml
+      - name: deploy
+        run: |
           cd pages
           git add ./ --all
           git config user.email "yume-wikijp@live.jp"
