@@ -73,6 +73,7 @@ macro_rules! xml_attribute_accessor_impl {
 macro_rules! optional_member_setter_impl {
     ($struct_name:ident, $( $name:ident : $into_type:ident),*) => {
         $(
+            #[allow(dead_code)]
             pub fn $name<S: Into<$into_type>>(self, $name: S) -> Self {
                 $struct_name {
                     $name: Some($name.into()),
@@ -85,6 +86,7 @@ macro_rules! optional_member_setter_impl {
 macro_rules! vec_member_setter_impl {
     ($struct_name:ident, $( $name:ident: $elem_type:ident ),*) => {
         $(
+            #[allow(dead_code)]
             pub fn $name(self, $name: Vec<$elem_type>) -> Self {
                 $struct_name {
                     $name: $name,
