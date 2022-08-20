@@ -156,6 +156,11 @@ impl HTMLText {
         }
     }
 }
+impl From<String> for HTMLText {
+    fn from(s: String) -> Self {
+        Self::new(&s)
+    }
+}
 impl From<&str> for HTMLText {
     fn from(s: &str) -> Self {
         Self::new(s)
