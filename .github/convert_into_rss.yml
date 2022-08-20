@@ -1,0 +1,38 @@
+name: convert into RSS(ATOM 1.0)
+on:
+  push:
+    branches:
+      - main
+jobs:
+  scrap:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: repo
+      - uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+          path: pages
+      - run: cd repo
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - run: cargo run > ../pages/feed/atom10.xml
+      - uses: actions/upload-artifact@v3
+        with:
+          name: atom
+          path: feed/atom10.xml
+      - run: cd ../pages
+      - run: |
+          git add ./ --all
+          git config user.email "yume-wikijp@live.jp"
+          git config user.name "yumetodo"
+          git commit -a -m "update"
+          git push
