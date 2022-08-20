@@ -226,14 +226,8 @@ impl Feed {
     concatenated_xml_accessor!(id, title, updated, author, link, entry);
     pub fn to_xml(&self) -> String {
         format!(
-            "{}\n{}",
-            r#"<?xml version="1.0" encoding="utf-8"?>"#,
-            self.to_xml_str("feed")
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<feed xmlns=\"http://www.w3.org/2005/Atom\">{}</feed>",
+            self.as_concatenated_xml()
         )
-    }
-}
-impl IntoXMLString for Feed {
-    fn to_xml_str(&self, var_name: &str) -> String {
-        to_xml_str(&self.as_concatenated_xml(), var_name)
     }
 }
