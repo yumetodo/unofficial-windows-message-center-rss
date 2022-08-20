@@ -207,7 +207,7 @@ pub struct Feed {
     title: String,
     updated: String,
     author: Vec<Person>,
-    link: Option<Link>,
+    link: Vec<Link>,
     entry: Vec<Entry>,
 }
 impl Feed {
@@ -217,12 +217,11 @@ impl Feed {
             title,
             updated,
             author: Default::default(),
-            link: None,
+            link: Default::default(),
             entry: Default::default(),
         }
     }
-    optional_member_setter_impl!(Feed, link: Link);
-    vec_member_setter_impl!(Feed, author: Person, entry: Entry);
+    vec_member_setter_impl!(Feed, author: Person, link: Link, entry: Entry);
     concatenated_xml_accessor!(id, title, updated, author, link, entry);
     pub fn to_xml(&self) -> String {
         format!(

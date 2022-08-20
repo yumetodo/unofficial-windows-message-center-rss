@@ -33,10 +33,11 @@ fn main() {
         Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string(),
     )
     .author(vec![Person::new("direek"), Person::new("Microsoft")])
-    .link(
+    .link(vec![
         Link::new()
-            .href("https://docs.microsoft.com/en-us/windows/release-health/windows-message-center"),
-    )
+            .href("https://docs.microsoft.com/en-us/windows/release-health/windows-message-center")
+            .type_("text/html"),
+    ])
     .entry(entries);
     std::io::stdout()
         .write_all(feed.to_xml().as_bytes())
