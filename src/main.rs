@@ -6,18 +6,31 @@ use chrono::Utc;
 use feed::*;
 use parser::Parser;
 use std::io::Write;
+use std::env;
+use std::fs;
 
-fn main() {
+fn read_from_web() -> reqwest::Result<String> {
     let client = reqwest::blocking::Client::builder()
         .user_agent("Mozilla/5.0 reqwest/0.11 https://github.com/yumetodo/unofficial-windows-message-center-rss")
-        .build()
-        .unwrap();
+        .build()?;
     let doc = client
         .get("https://docs.microsoft.com/en-us/windows/release-health/windows-message-center")
-        .send()
-        .unwrap()
-        .text()
-        .unwrap();
+        .send()?
+        .text()?;
+    Ok(doc)
+}
+
+fn read_html(args: &Vec<String>) -> String {
+    if args.len() == 2 {
+        fs::read_to_string(&args[1]).unwrap()
+    } else {
+        read_from_web().unwrap()
+    }
+}
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let doc = read_html(&args);
     let articles = Parser::new("https://docs.microsoft.com").parse(&doc);
     let entries = articles
         .into_iter()
