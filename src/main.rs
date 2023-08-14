@@ -5,9 +5,9 @@ use article::Article;
 use chrono::Utc;
 use feed::*;
 use parser::Parser;
-use std::io::Write;
 use std::env;
 use std::fs;
+use std::io::Write;
 
 fn read_from_web() -> reqwest::Result<String> {
     let client = reqwest::blocking::Client::builder()
@@ -20,23 +20,42 @@ fn read_from_web() -> reqwest::Result<String> {
     Ok(doc)
 }
 
-fn read_html(args: &Vec<String>) -> String {
-    if args.len() == 2 {
-        fs::read_to_string(&args[1]).unwrap()
-    } else {
-        read_from_web().unwrap()
+fn read_html(path: Option<String>) -> String {
+    match path {
+        Some(p) => fs::read_to_string(p).unwrap(),
+        None => read_from_web().unwrap(),
+    }
+}
+
+struct Options {
+    self_uri: String,
+    path: Option<String>,
+}
+impl Options {
+    fn new(args: Vec<String>) -> Self {
+        if args.len() != 2 && args.len() != 3 {
+            panic!("{} SELF_URI [path]", args[0]);
+        }
+        Self {
+            self_uri: args[1].clone(),
+            path: if args.len() == 3 {
+                Some(args[2].clone())
+            } else {
+                None
+            },
+        }
     }
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let doc = read_html(&args);
-    let articles = Parser::new("https://docs.microsoft.com").parse(&doc);
+    let options = Options::new(env::args().collect::<Vec<String>>());
+    let doc = read_html(options.path);
+    let articles = Parser::new(&options.self_uri, "https://docs.microsoft.com").parse(&doc);
     let entries = articles
         .into_iter()
         .map(|a: Article| {
             Entry::new(format!("https://docs.microsoft.com/en-us/windows/release-health/windows-message-center#{}", a.id), a.title, a.date)
-                .link(Link::new().href(a.url).rel("alternate"))
+                .link(Link::new().href(a.url).rel(a.rel))
                 .content(a.body)
         })
         .collect::<Vec<Entry>>();
@@ -51,7 +70,7 @@ fn main() {
             .href("https://docs.microsoft.com/en-us/windows/release-health/windows-message-center")
             .type_("text/html"),
         Link::new()
-            .href("https://yumetodo.github.io/unofficial-windows-message-center-rss/feed/atom10.xml")
+            .href(&options.self_uri)
             .type_("application/atom+xml")
             .rel("self"),
     ])

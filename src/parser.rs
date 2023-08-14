@@ -9,31 +9,36 @@ use scraper::Selector;
 
 #[derive(Debug)]
 pub struct Parser {
+    self_uri: String,
     base_url: String,
     selector_table_line: Selector,
     selector_article_head: Selector,
     selector_article_id: Selector,
-    selector_b: Selector,
+    selector_b_for_alternate: Selector,
+    selector_b_for_self: Selector,
     selector_article_body: Selector,
     selector_article_date: Selector,
 }
 impl Parser {
-    pub fn new(base_url: &str) -> Self {
+    pub fn new(self_uri: &str, base_url: &str) -> Self {
         Parser {
+            self_uri: self_uri.to_string(),
             base_url: base_url.to_string(),
             selector_table_line: Selector::parse(r##"#recent-announcements + table tr"##).unwrap(),
             selector_article_head: Selector::parse(r#"td[id] > a[data-linktype]"#).unwrap(),
             selector_article_id: Selector::parse("td[id").unwrap(),
-            selector_b: Selector::parse("b").unwrap(),
+            selector_b_for_alternate: Selector::parse("b").unwrap(),
+            selector_b_for_self: Selector::parse("td[id] > b").unwrap(),
             selector_article_body: Selector::parse("td[id] > div").unwrap(),
             selector_article_date: Selector::parse("td[id] + td").unwrap(),
         }
     }
-    fn parse_url<'a>(&self, title_element: ElementRef<'a>) -> Option<String> {
+    fn parse_url<'a>(&self, title_element: ElementRef<'a>) -> Option<(String, &'static str)> {
         let v = title_element.value();
         match v.attr("data-linktype")? {
-            "external" => Some(v.attr("href")?.to_string()),
-            "absolute-path" => Some(self.base_url.clone() + v.attr("href")?),
+            "external" => Some((v.attr("href")?.to_string(), "alternate")),
+            "absolute-path" => Some((self.base_url.clone() + v.attr("href")?, "alternate")),
+            "self-bookmark" => Some((self.self_uri.clone(), "self")),
             _ => None,
         }
     }
@@ -52,14 +57,24 @@ impl Parser {
             .to_string();
         Some(utc)
     }
+    fn parse_title<'a>(
+        &self,
+        tr: ElementRef<'a>,
+        title_element: ElementRef<'a>,
+        rel: &'static str,
+    ) -> Option<String> {
+        let s = match rel {
+            "self" => tr.select(&self.selector_b_for_self).next(),
+            "alternate" => title_element.select(&self.selector_b_for_alternate).next(),
+            _ => None,
+        }?;
+        Some(s.text().collect())
+    }
     fn parse_line<'a>(&self, tr: ElementRef<'a>) -> Option<Article> {
         let title_element = tr.select(&self.selector_article_head).next()?;
-        let url = self.parse_url(title_element)?;
-        let title: String = title_element
-            .select(&self.selector_b)
-            .next()?
-            .text()
-            .collect();
+        println!("{:?}", title_element.value());
+        let (url, rel) = self.parse_url(title_element)?;
+        let title = self.parse_title(tr, title_element, rel)?;
         let id = tr
             .select(&self.selector_article_id)
             .next()?
@@ -72,7 +87,7 @@ impl Parser {
             .reduce(|ret, next| ret + &next)?;
         let date = tr.select(&self.selector_article_date).next()?;
         let date = self.parse_date(date)?;
-        Some(Article::new(id, url, title, date, body))
+        Some(Article::new(id, url, rel, title, date, body))
     }
     pub fn parse(&self, doc: &str) -> Vec<Article> {
         let document = Html::parse_document(&doc);
