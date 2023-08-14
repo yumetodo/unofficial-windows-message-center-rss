@@ -117,7 +117,7 @@ mod test {
         let doc = Html::parse_document(input);
         let selector = Selector::parse("td[id] + td").unwrap();
         let elem = doc.select(&selector).next().unwrap();
-        let parsed = Parser::new("").parse_date(elem);
+        let parsed = Parser::new("", "").parse_date(elem);
         assert_eq!(parsed, Some("2022-05-24T21:00:00Z".to_string()));
     }
 }
