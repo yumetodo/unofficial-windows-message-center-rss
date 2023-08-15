@@ -72,7 +72,6 @@ impl Parser {
     }
     fn parse_line<'a>(&self, tr: ElementRef<'a>) -> Option<Article> {
         let title_element = tr.select(&self.selector_article_head).next()?;
-        println!("{:?}", title_element.value());
         let (url, rel) = self.parse_url(title_element)?;
         let title = self.parse_title(tr, title_element, rel)?;
         let id = tr
