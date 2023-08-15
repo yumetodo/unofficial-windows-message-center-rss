@@ -174,7 +174,7 @@ impl IntoXMLString for HTMLText {
 
 pub struct Entry {
     id: String,
-    title: String,
+    title: HTMLText,
     updated: String,
     author: Vec<Person>,
     content: Option<HTMLText>,
@@ -182,7 +182,7 @@ pub struct Entry {
     summary: Option<HTMLText>,
 }
 impl Entry {
-    pub fn new(id: String, title: String, updated: String) -> Self {
+    pub fn new(id: String, title: HTMLText, updated: String) -> Self {
         Entry {
             id,
             title,

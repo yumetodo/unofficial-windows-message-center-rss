@@ -54,7 +54,7 @@ fn main() {
     let entries = articles
         .into_iter()
         .map(|a: Article| {
-            Entry::new(format!("https://docs.microsoft.com/en-us/windows/release-health/windows-message-center#{}", a.id), a.title, a.date)
+            Entry::new(format!("https://docs.microsoft.com/en-us/windows/release-health/windows-message-center#{}", a.id), a.title.into(), a.date)
                 .link(Link::new().href(a.url).rel(a.rel))
                 .content(a.body)
         })
