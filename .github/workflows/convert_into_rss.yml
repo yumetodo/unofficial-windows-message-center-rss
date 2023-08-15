@@ -29,7 +29,10 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - run: mkdir -p pages/feed
-      - run: cd repo && cargo run "https://yumetodo.github.io/unofficial-windows-message-center-rss/feed/atom10.xml" > ../pages/feed/atom10.xml
+      - run: cargo test
+        working-directory: repo
+      - run: cargo run "https://yumetodo.github.io/unofficial-windows-message-center-rss/feed/atom10.xml" > ../pages/feed/atom10.xml
+        working-directory: repo
       - name: deploy
         run: |
           cd pages
