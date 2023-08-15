@@ -266,7 +266,7 @@ mod test {
     #[test]
     fn parse_url_when_absolute_path() {
         let doc = Html::parse_document(HTML_OF_ABSOLUTE_PATH);
-        let p = Parser::new("", "https://docs.microsoft.com");
+        let p = Parser::new("", "https://learn.microsoft.com");
         let title_element = doc
             .select(&p.selector_table_line)
             .next()
@@ -277,7 +277,7 @@ mod test {
         let ret = p.parse_url(title_element);
         assert!(ret.is_some());
         let (url, rel) = ret.unwrap();
-        assert_eq!(url, "https://docs.microsoft.com/en-us/lifecycle/announcements/windows-10-21h2-end-of-servicing");
+        assert_eq!(url, "https://learn.microsoft.com/en-us/lifecycle/announcements/windows-10-21h2-end-of-servicing");
         assert_eq!(rel, "alternate");
     }
 

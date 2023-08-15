@@ -1,6 +1,6 @@
 # unofficial-windows-message-center-rss
 
-This is unofficial RSS of [Windows message center | Microsoft Docs](https://docs.microsoft.com/en-us/windows/release-health/windows-message-center)
+This is unofficial RSS of [Windows message center | Microsoft Docs](https://learn.microsoft.com/en-us/windows/release-health/windows-message-center)
 
 [RSS](https://yumetodo.github.io/unofficial-windows-message-center-rss/feed/atom10.xml)
 

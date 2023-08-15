@@ -14,7 +14,7 @@ fn read_from_web() -> reqwest::Result<String> {
         .user_agent("Mozilla/5.0 reqwest/0.11 https://github.com/yumetodo/unofficial-windows-message-center-rss")
         .build()?;
     let doc = client
-        .get("https://docs.microsoft.com/en-us/windows/release-health/windows-message-center")
+        .get("https://learn.microsoft.com/en-us/windows/release-health/windows-message-center")
         .send()?
         .text()?;
     Ok(doc)
@@ -50,11 +50,11 @@ impl Options {
 fn main() {
     let options = Options::new(env::args().collect::<Vec<String>>());
     let doc = read_html(options.path);
-    let articles = Parser::new(&options.self_uri, "https://docs.microsoft.com").parse(&doc);
+    let articles = Parser::new(&options.self_uri, "https://learn.microsoft.com").parse(&doc);
     let entries = articles
         .into_iter()
         .map(|a: Article| {
-            Entry::new(format!("https://docs.microsoft.com/en-us/windows/release-health/windows-message-center#{}", a.id), a.title.into(), a.date)
+            Entry::new(format!("https://learn.microsoft.com/en-us/windows/release-health/windows-message-center#{}", a.id), a.title.into(), a.date)
                 .link(Link::new().href(a.url).rel(a.rel))
                 .content(a.body)
         })
@@ -67,7 +67,7 @@ fn main() {
     .author(vec![Person::new("direek"), Person::new("Microsoft")])
     .link(vec![
         Link::new()
-            .href("https://docs.microsoft.com/en-us/windows/release-health/windows-message-center")
+            .href("https://learn.microsoft.com/en-us/windows/release-health/windows-message-center")
             .type_("text/html"),
         Link::new()
             .href(&options.self_uri)
