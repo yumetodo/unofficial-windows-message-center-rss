@@ -6,6 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
+      - run: sudo apt-get -y install libxml2-utils
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
@@ -18,6 +19,8 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - run: cargo test
       - run: cargo build --release
+      - run: ./target/release/unofficial-windows-message-center-rss "https://yumetodo.github.io/unofficial-windows-message-center-rss/feed/atom10.xml" > atom10.xml
+      - run: xmllint atom10.xml --noout
       - name: Upload Binary
         uses: actions/upload-artifact@v3
         if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main'
