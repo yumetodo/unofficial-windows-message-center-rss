@@ -1,9 +1,6 @@
 name: convert into RSS(ATOM 1.0)
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
   schedule:
     # UTC 表記
     # 日本時間 09:19
