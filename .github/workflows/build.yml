@@ -7,6 +7,12 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - run: sudo apt-get -y install libxml2-utils
+        continue-on-error: true
+      - run: |
+          curl -LO http://www.ftp.ne.jp/Linux/packages/ubuntu/archive/pool/main/libx/libxml2/libxml2-utils_2.9.13+dfsg-1ubuntu0.4_amd64.deb
+          if [ -f libxml2-utils_2.9.13+dfsg-1ubuntu0.4_amd64.deb ]; then
+            sudo dpkg -i libxml2-utils_2.9.13+dfsg-1ubuntu0.4_amd64.deb
+          fi
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
