@@ -9,16 +9,7 @@ jobs:
   scrap:
     runs-on: ubuntu-22.04
     steps:
-      - run: sudo apt-get -y install libxml2-utils
-        continue-on-error: true
-      - run: |
-          if ! command -v xmllint; then
-            curl -LO http://www.ftp.ne.jp/Linux/packages/ubuntu/archive/pool/main/libx/libxml2/libxml2-utils_2.9.13+dfsg-1ubuntu0.4_amd64.deb
-            if [ -f libxml2-utils_2.9.13+dfsg-1ubuntu0.4_amd64.deb ]; then
-              sudo dpkg -i libxml2-utils_2.9.13+dfsg-1ubuntu0.4_amd64.deb
-              xmllint --version
-            fi
-          fi
+      - run: sudo apt-get -y update && sudo apt-get -y install libxml2-utils
       - uses: dsaltares/fetch-gh-release-asset@master
         with:
           file: unofficial-windows-message-center-rss
