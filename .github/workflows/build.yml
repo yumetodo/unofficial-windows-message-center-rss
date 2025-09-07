@@ -4,11 +4,11 @@ on:
   push:
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - run: sudo apt-get -y update && sudo apt-get -y install libxml2-utils
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v5
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -22,14 +22,14 @@ jobs:
       - run: ./target/release/unofficial-windows-message-center-rss "https://yumetodo.github.io/unofficial-windows-message-center-rss/feed/atom10.xml" > atom10.xml
       - run: xmllint atom10.xml --noout
       - name: Upload Binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main'
         with:
           name: utf8_to_windows31j_cvt_checker
           path: target/release/unofficial-windows-message-center-rss
           retention-days: 2
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: target/release/unofficial-windows-message-center-rss

@@ -7,14 +7,14 @@ on:
     - cron: "19 0 * * *"
 jobs:
   scrap:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - run: sudo apt-get -y update && sudo apt-get -y install libxml2-utils
       - uses: dsaltares/fetch-gh-release-asset@master
         with:
           file: unofficial-windows-message-center-rss
       - run: chmod +x unofficial-windows-message-center-rss
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
         with:
           ref: gh-pages
           path: pages
