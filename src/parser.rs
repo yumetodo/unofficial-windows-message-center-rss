@@ -48,9 +48,13 @@ impl Parser {
         if let Some(end_pos) = date_str.rfind(char::is_whitespace) {
             date_str.truncate(end_pos);
         }
-        let dt = Los_Angeles
-            .datetime_from_str(&date_str, "%Y-%m-%d %H:%M")
-            .unwrap();
+
+        // NaiveDateTimeをパース
+        let naive_dt =
+            chrono::naive::NaiveDateTime::parse_from_str(&date_str, "%Y-%m-%d %H:%M").ok()?;
+
+        // タイムゾーンを付与してDateTime<FixedOffset>に変換
+        let dt = Los_Angeles.from_local_datetime(&naive_dt).single()?;
         let utc = dt
             .with_timezone(&UTC)
             .format("%Y-%m-%dT%H:%M:%SZ")
