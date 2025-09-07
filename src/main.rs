@@ -11,7 +11,7 @@ use std::io::Write;
 
 fn read_from_web() -> reqwest::Result<String> {
     let client = reqwest::blocking::Client::builder()
-        .user_agent("Mozilla/5.0 reqwest/0.11 https://github.com/yumetodo/unofficial-windows-message-center-rss")
+        .user_agent("Mozilla/5.0 reqwest/0.12.23 https://github.com/yumetodo/unofficial-windows-message-center-rss")
         .build()?;
     let doc = client
         .get("https://learn.microsoft.com/en-us/windows/release-health/windows-message-center")
