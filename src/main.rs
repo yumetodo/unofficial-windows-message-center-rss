@@ -70,7 +70,7 @@ fn main() {
             .href("https://learn.microsoft.com/en-us/windows/release-health/windows-message-center")
             .type_("text/html"),
         Link::new()
-            .href(&options.self_uri)
+            .href(options.self_uri.as_str())
             .type_("application/atom+xml")
             .rel("self"),
     ])

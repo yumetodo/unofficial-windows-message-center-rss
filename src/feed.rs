@@ -119,7 +119,7 @@ impl IntoXMLString for Person {
 }
 #[derive(Default)]
 pub struct Link {
-    href: Option<String>,
+    href: Option<HTMLText>,
     rel: Option<String>,
     type_: Option<String>,
     hreflang: Option<String>,
@@ -133,7 +133,7 @@ impl Link {
     }
     optional_member_setter_impl!(
         Link,
-        href: String,
+        href: HTMLText,
         rel: String,
         type_: String,
         hreflang: String,
@@ -169,6 +169,12 @@ impl From<&str> for HTMLText {
 impl IntoXMLString for HTMLText {
     fn to_xml_str(&self, var_name: &str) -> String {
         format!(r#"<{} type="html">{}</{}>"#, var_name, self.text, var_name)
+    }
+}
+impl std::ops::Deref for HTMLText {
+    type Target = str;
+    fn deref(&self) -> &str {
+        &self.text
     }
 }
 
